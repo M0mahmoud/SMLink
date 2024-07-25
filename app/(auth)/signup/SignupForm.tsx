@@ -3,11 +3,19 @@ import { signupAction } from "@/action/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 const SignupForm = () => {
+  const router = useRouter();
   const [state, action] = useFormState(signupAction, undefined);
 
+  useEffect(() => {
+    if (state?.redirect) {
+      router.push(state.redirect);
+    }
+  }, [state, router]);
   return (
     <form action={action}>
       <div className="flex flex-col gap-2">

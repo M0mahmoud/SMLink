@@ -26,10 +26,11 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(id: number) {
+export async function createSession(id: number | string) {
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
   const session = await encrypt({ userId: id, expiresAt });
 
+  cookies().delete("session");
   cookies().set("session", session, {
     httpOnly: true,
     secure: true,
@@ -37,20 +38,18 @@ export async function createSession(id: number) {
     sameSite: "lax",
     path: "/",
   });
-
-  redirect("/");
 }
 
 export async function verifySession() {
   const cookie = cookies().get("session")?.value;
   if (!cookie) {
     console.log("Session cookie not found");
-    return { isAuth: false, userId: null };
+    return { isAuth: false };
   }
   const session = await decrypt(cookie);
 
   if (!session?.userId) {
-    redirect("/login");
+    return { isAuth: false };
   }
   return { isAuth: true, userId: Number(session?.userId) };
 }

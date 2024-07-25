@@ -1,5 +1,5 @@
 "use server";
-import { connectDB } from "@/db";
+import connectDB from "@/db";
 
 import {
   AuthFormState,
@@ -30,32 +30,39 @@ export async function signupAction(
   }
 
   const { email, name, password } = validation.data;
-  await connectDB();
-  const existingUser = await User.findOne({ email });
+  try {
+    await connectDB();
+    const existingUser = await User.findOne({ email });
 
-  if (existingUser) {
-    return {
-      message: "Invalid login credentials.",
-    };
+    if (existingUser) {
+      return {
+        message: "Invalid login credentials.",
+      };
+    }
+
+    const hashedPassword = await hash(password, 10);
+
+    const user = await User.create({
+      email,
+      name,
+      password: hashedPassword,
+    });
+
+    if (!user) {
+      return {
+        message: "An error occurred while creating your account.",
+      };
+    }
+
+    const userId = user._id.toString();
+    await createSession(userId);
+    return { redirect: "/" };
+  } catch (error) {
+    console.error("Error finding user or creating session:", error);
+    return { message: "An error occurred. Please try again later." };
   }
-
-  const hashedPassword = await hash(password, 10);
-
-  const user = await User.create({
-    email,
-    name,
-    password: hashedPassword,
-  });
-
-  if (!user) {
-    return {
-      message: "An error occurred while creating your account.",
-    };
-  }
-
-  const userId = user._id.toString();
-  await createSession(userId);
 }
+
 export async function loginAction(
   _state: AuthFormState,
   formData: FormData
@@ -73,22 +80,30 @@ export async function loginAction(
 
   const { email, password } = validation.data;
 
-  const user = await User.findOne({
-    email,
-  });
+  try {
+    await connectDB();
+    const user = await User.findOne({
+      email,
+    });
 
-  if (!user) {
-    return { message: "Invalid login credentials." };
+    if (!user) {
+      return { message: "Invalid login credentials." };
+    }
+
+    const passwordMatch = await compare(password, user.password);
+
+    if (!passwordMatch) {
+      return { message: "Invalid login credentials." };
+    }
+    const userId = user._id.toString();
+    await createSession(userId);
+    return { redirect: "/" };
+  } catch (error) {
+    console.error("Error-login:", error);
+    return { message: "An error occurred. Please try again later." };
   }
-
-  const passwordMatch = await compare(password, user.password);
-
-  if (!passwordMatch) {
-    return { message: "Invalid login credentials." };
-  }
-  const userId = user._id.toString();
-  await createSession(userId);
 }
+
 export async function logout() {
   cookies().delete("session");
   redirect("/login");

@@ -2,11 +2,13 @@ import { object, string } from "zod";
 export type AuthFormState =
   | {
       errors?: {
+        url?: string[];
         name?: string[];
         email?: string[];
         password?: string[];
       };
       message?: string;
+      redirect?: string;
     }
   | undefined;
 
