@@ -1,7 +1,6 @@
 import { SessionPayload } from "@/lib/definitions";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 const secretKey = process.env.AUTH_SECRET;
 const key = new TextEncoder().encode(secretKey);
@@ -51,5 +50,5 @@ export async function verifySession() {
   if (!session?.userId) {
     return { isAuth: false };
   }
-  return { isAuth: true, userId: Number(session?.userId) };
+  return { isAuth: true, userId: session?.userId };
 }

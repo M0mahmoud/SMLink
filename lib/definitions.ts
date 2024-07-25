@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { object, string } from "zod";
 export type AuthFormState =
   | {
@@ -42,6 +43,14 @@ export interface UserDocument {
   email: string;
   password: string;
   name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface LinkDocument {
+  user: Types.ObjectId;
+  original: string;
+  shortUrl: string;
+  clicks: number;
   createdAt: Date;
   updatedAt: Date;
 }
