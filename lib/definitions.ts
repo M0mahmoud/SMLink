@@ -46,11 +46,21 @@ export interface UserDocument {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// For Now
 export interface LinkDocument {
-  user: Types.ObjectId;
+  user?: Types.ObjectId;
   original: string;
   shortUrl: string;
   clicks: number;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt?: Date;
+  clickDetails?: ClickDetail[];
+}
+export interface ClickDetail {
+  ip: string;
+  city?: string;
+  country?: string;
+  timeOfClick: Date;
+  userAgent?: string;
 }

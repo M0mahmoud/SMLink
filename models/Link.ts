@@ -22,6 +22,15 @@ const LinkSchema = new Schema<LinkDocument>(
       type: Number,
       default: 0,
     },
+    clickDetails: [
+      {
+        ip: { type: String, required: true },
+        city: { type: String },
+        country: { type: String },
+        timeOfClick: { type: Date, default: Date.now },
+        userAgent: { type: String },
+      },
+    ],
   },
   {
     timestamps: true,

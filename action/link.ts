@@ -1,10 +1,11 @@
 "use server";
 import connectDB from "@/db";
-import { AuthFormState } from "@/lib/definitions";
+import { AuthFormState, LinkDocument } from "@/lib/definitions";
 import { generateShortUrl } from "@/lib/shortlink";
 import Link from "@/models/Link";
 import { verifySession } from "@/session";
 import { ObjectId } from "mongodb";
+import { redirect } from "next/navigation";
 
 export async function shortLinkFormAction(
   _state: AuthFormState,
@@ -46,4 +47,34 @@ export async function shortLinkFormAction(
         "An error occurred while creating the short link. Please try again.",
     };
   }
+}
+
+export async function getLinksAction(): Promise<LinkData[]> {
+  try {
+    const { isAuth, userId } = await verifySession();
+    if (!isAuth) {
+      redirect("/login");
+    }
+    const links = await Link.find({
+      user: new ObjectId(userId as string),
+    }).select("shortUrl original clicks createdAt -_id");
+
+    const formattedLinks = links.map((link) => ({
+      shortUrl: link.shortUrl,
+      original: link.original,
+      clicks: link.clicks,
+      createdAt: link.createdAt,
+    }));
+
+    return formattedLinks;
+  } catch (error) {
+    console.error("Error fetching links:", error);
+    return [];
+  }
+}
+export interface LinkData {
+  shortUrl: string;
+  original: string;
+  clicks: number;
+  createdAt: Date;
 }
