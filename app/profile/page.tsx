@@ -46,23 +46,18 @@ const ProfilePage = async () => {
               className="p-2 text-main-1 focus-visible:ring-0 focus-visible:ring-offset-0  focus:border-main-3"
             />
           </div>
-          <ProfileButton />
+          <Button
+            aria-disabled={true}
+            disabled={true}
+            type="submit"
+            className="mt-4 w-full text-white py-2 px-4"
+          >
+            Update Your Info
+          </Button>
         </div>
       </form>
     </section>
   );
 };
 
-export function ProfileButton() {
-  return (
-    <Button
-      aria-disabled={true}
-      disabled={true}
-      type="submit"
-      className="mt-4 w-full text-white py-2 px-4"
-    >
-      Update Your Info
-    </Button>
-  );
-}
 export default ProfilePage;
