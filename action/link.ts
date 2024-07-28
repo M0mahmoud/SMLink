@@ -5,6 +5,7 @@ import { generateShortUrl } from "@/lib/shortlink";
 import Link from "@/models/Link";
 import { verifySession } from "@/session";
 import { ObjectId } from "mongodb";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function shortLinkFormAction(
@@ -70,6 +71,21 @@ export async function getLinksAction(): Promise<LinkData[]> {
   } catch (error) {
     console.error("Error fetching links:", error);
     return [];
+  }
+}
+export async function deleteLinkAction(url: string): Promise<void> {
+  try {
+    const { isAuth } = await verifySession();
+    if (!isAuth) {
+      redirect("/login");
+    }
+    const link = await Link.findOneAndDelete({
+      shortUrl: url,
+    });
+    console.log("link:", link);
+    revalidatePath("/links");
+  } catch (error) {
+    console.error("Error fetching links:", error);
   }
 }
 export interface LinkData {

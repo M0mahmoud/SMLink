@@ -15,6 +15,7 @@ import {
 import { ArrowUpDown, ChevronDown, Clipboard, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+import { deleteLinkAction } from "@/action/link";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -213,17 +214,22 @@ export const columns: ColumnDef<LinkDocument>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const rowData = row.original;
 
       return (
         <div className="flex gap-4">
           <Button
             variant="outline"
-            onClick={() => navigator.clipboard.writeText(payment.shortUrl)}
+            onClick={() => navigator.clipboard.writeText(rowData.shortUrl)}
           >
             <Clipboard className=" h-4 w-4" />
           </Button>
-          <Button variant="destructive" onClick={() => {}}>
+          <Button
+            variant="destructive"
+            onClick={async () => {
+              await deleteLinkAction(rowData.shortUrl);
+            }}
+          >
             <Trash2 className=" h-4 w-4" />
           </Button>
         </div>
