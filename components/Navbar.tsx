@@ -8,10 +8,16 @@ import React from "react";
 const Navbar = ({ isAuth }: { isAuth: boolean }) => {
   const pathname = usePathname();
 
-  const LINKS = [
-    { href: "/", name: "Home" },
-    { href: "/links", name: "Links" },
-  ];
+  const LINKS = !isAuth
+    ? [
+        { href: "/", name: "Home" },
+        { href: "/login", name: "Login" },
+      ]
+    : [
+        { href: "/", name: "Home" },
+        { href: "/links", name: "Links" },
+        { href: "/profile", name: "Profile" },
+      ];
 
   return (
     <header className="fixed left-0 top-0 py-4 z-10 mx-auto px-4 sm:px-10 w-full bordr border-b-[1px] border-main-3 shadow-sm">
@@ -41,17 +47,6 @@ const Navbar = ({ isAuth }: { isAuth: boolean }) => {
               {link.name}
             </Link>
           ))}
-          <Link
-            href={isAuth ? "/profile" : "/login"}
-            className={cn(
-              "text-lg capitalize font-normal text-secondary-foreground hover:text-primary transition-colors",
-              {
-                "text-primary": pathname === (isAuth ? "/profile" : "/login"),
-              }
-            )}
-          >
-            {isAuth ? "Profile" : "Login"}
-          </Link>
         </div>
       </div>
     </header>
