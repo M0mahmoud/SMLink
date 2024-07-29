@@ -10,6 +10,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Short Your Links",
   description: "Short and Manage Your Links",
+  verification: {
+    google: "i1Pb2bZvzqGRzaXp0-Yk1lY8zJ7xLgeDm6sn2CZQ4xw",
+  },
 };
 
 export default async function RootLayout({
